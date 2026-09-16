@@ -114,6 +114,63 @@
     }
   }
 
+  // ---------- 网格图片：失败重试 + 兜底占位 ----------
+  //
+  // 之前偶尔出现"某张图加载不出来"，成因是弱网下请求超时或中途失败，
+  // 而页面没有任何处理，卡片就一直是空白，访客不知道发生了什么。
+  // 这里做两层兜底：
+  //   1) 首次失败后隔 800ms 重试一次（带时间戳绕过可能的坏缓存）
+  //   2) 再失败就把卡片替换成可点击的占位提示，点一下会重新加载
+  function initGridImages() {
+    var grid = $('#grid');
+    if (!grid) return;
+
+    function markBroken(img) {
+      var box = img.parentNode;
+      if (!box || box.querySelector('.thumb-fallback')) return;
+      img.hidden = true;
+      var fb = document.createElement('div');
+      fb.className = 'thumb-fallback';
+      fb.setAttribute('role', 'button');
+      fb.setAttribute('tabindex', '0');
+      fb.innerHTML = '<span>图片未能加载</span><small>点此重新加载</small>';
+      var reload = function (e) {
+        e.stopPropagation();           // 不要顺带打开灯箱
+        fb.remove();
+        img.hidden = false;
+        img.dataset.retry = '0';
+        img.src = img.dataset.full || img.src.split('?')[0];
+      };
+      fb.addEventListener('click', reload);
+      fb.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); reload(e); }
+      });
+      box.appendChild(fb);
+    }
+
+    // 用捕获阶段监听，因为 error 事件不会冒泡
+    grid.addEventListener('error', function (e) {
+      var img = e.target;
+      if (!img || img.tagName !== 'IMG') return;
+      var retries = Number(img.dataset.retry || 0);
+
+      if (retries < 1) {
+        img.dataset.retry = String(retries + 1);
+        // 加时间戳重试一次，绕过失败缓存
+        var base = (img.dataset.thumb || img.src).split('?')[0];
+        img.dataset.thumb = base;
+        setTimeout(function () { img.src = base + '?r=' + Date.now(); }, 800);
+      } else {
+        markBroken(img);
+      }
+    }, true);
+
+    // 记下缩略图原始地址，便于重试时使用干净路径
+    Array.prototype.forEach.call(grid.querySelectorAll('img[data-full]'), function (img) {
+      img.dataset.thumb = img.src;
+    });
+  }
+
   // ---------- 灯箱：查看大图，支持缩放和拖动 ----------
   var viewer = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0 };
 
@@ -239,6 +296,7 @@
     initTheme();
     initViewer();
     initQr();
+    initGridImages();
 
     // 搜索
     var search = $('#search');
@@ -264,6 +322,19 @@
       // 证书卡片：点开大图
       var card = e.target.closest('.card');
       if (card && card.dataset.id) {
+        var item = App.byId(card.dataset.id);
+        if (item) openViewer(item);
+      }
+    });
+
+    // 卡片支持键盘打开（卡片本身是 role=button、可聚焦）
+    // 空格键只在卡片自身获得焦点时拦截，避免抢掉其他控件的默认行为
+    document.addEventListener('keydown', function (e) {
+      var card = e.target.closest && e.target.closest('.card');
+      if (!card || !card.dataset.id) return;
+      var isSelf = e.target === card;
+      if (e.key === 'Enter' || (e.key === ' ' && isSelf)) {
+        e.preventDefault();
         var item = App.byId(card.dataset.id);
         if (item) openViewer(item);
       }

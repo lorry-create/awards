@@ -304,6 +304,29 @@ code {
 }
 .card:hover .card-zoom, .card:focus-visible .card-zoom { opacity: 1; }
 
+/* 缩略图加载失败后的兜底占位：可点击重新加载，不留空白卡片 */
+.thumb-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .25rem;
+  background: var(--bg-soft);
+  color: var(--text-soft);
+  font-size: .85rem;
+  text-align: center;
+  cursor: pointer;
+  padding: 1rem;
+}
+.thumb-fallback small { color: var(--text-mute); font-size: .74rem; }
+.thumb-fallback:hover, .thumb-fallback:focus-visible {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.thumb-fallback:hover small { color: var(--accent); }
+
 .card-body { padding: .85rem .95rem 1rem; display: flex; flex-direction: column; gap: .34rem; }
 
 .card-badges { display: flex; flex-wrap: wrap; gap: .35rem; }

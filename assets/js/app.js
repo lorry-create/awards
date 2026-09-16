@@ -117,7 +117,13 @@
       '<article class="card" data-id="' + esc(item.id) + '" tabindex="0" role="button" ' +
       'aria-label="查看证书大图：' + esc(item.eventShort) + ' ' + esc(item.award) + '">' +
         '<div class="card-thumb">' +
-          '<img src="' + esc(item.src) + '" alt="' + esc(item.event + ' ' + item.award) + '" ' +
+          // 网格里用缩略图（约 38 KB），点开看大图时才加载 1600px 原图。
+          // 之前网格直接引用原图，首屏要下 4 MB，手机上就会很慢甚至超时。
+          // data-full 供灯箱使用，data-retry 记录已重试次数（见 events.js）。
+          '<img src="' + esc(item.thumb || item.src) + '" ' +
+          'data-full="' + esc(item.src) + '" ' +
+          'data-retry="0" ' +
+          'alt="' + esc(item.event + ' ' + item.award) + '" ' +
           'loading="lazy" decoding="async">' +
           '<div class="card-zoom" aria-hidden="true">点击放大</div>' +
         '</div>' +
