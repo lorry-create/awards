@@ -47,7 +47,11 @@
 
 * { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  /* 避免滚到页面尽头后继续滑动导致整页回弹、上滑"拉不回来" */
+  overscroll-behavior-y: contain;
+}
 
 body {
   margin: 0;
@@ -373,32 +377,21 @@ code {
   margin: 1rem 0;
 }
 
-/* ---------- PDF 列表 ---------- */
-.pdf-list { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: .7rem; }
-.pdf-list li {
-  display: flex;
-  align-items: center;
-  gap: .9rem;
-  padding: .8rem .9rem;
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  flex-wrap: wrap;
-}
-.pdf-info { flex: 1 1 240px; display: flex; flex-direction: column; gap: .2rem; }
-.pdf-info p { margin: 0; }
-.pdf-icon {
-  flex: 0 0 auto;
-  font-size: .7rem;
-  font-weight: 700;
-  letter-spacing: .04em;
-  color: #fff;
-  background: var(--accent);
-  border-radius: 6px;
-  padding: .3rem .45rem;
-}
-
 /* ---------- 大图查看器 ---------- */
+/*
+ * 关键：布局必须写在 .viewer[open] 下面。
+ *
+ * 浏览器靠 dialog:not([open]) { display: none } 来隐藏关闭后的对话框，
+ * 而这个选择器的优先级只有 (0,1,1)。如果无条件写 .viewer { display: flex }，
+ * 就会把"关闭即隐藏"这条默认规则覆盖掉——点关闭后 open 属性虽然被移除，
+ * 对话框却仍然显示，于是整个页面被它卡住、关不掉。
+ * 加上 [open] 限定后优先级变为 (0,2,0)，既不干扰默认隐藏规则，
+ * 又能正常使用 flex 布局。
+ */
+.viewer[open] {
+  display: flex;
+  flex-direction: column;
+}
 .viewer {
   width: min(1100px, 96vw);
   height: min(94vh, 1000px);
@@ -408,8 +401,6 @@ code {
   background: var(--bg-elev);
   color: var(--text);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 .viewer::backdrop { background: rgba(12, 10, 9, .72); }
 
@@ -490,7 +481,7 @@ code {
 
 /* ---------- 打印 / 另存为 PDF ---------- */
 @media print {
-  .site-header, .qr-panel, .toolbar, .hero-note, .site-footer, .viewer, .card-zoom, .pdf-list .btn {
+  .site-header, .qr-panel, .toolbar, .hero-note, .site-footer, .viewer, .card-zoom {
     display: none !important;
   }
   body { background: #fff; color: #000; }

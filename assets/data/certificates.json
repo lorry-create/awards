@@ -1,7 +1,7 @@
 {
     "owner":  "罗镓裕",
     "school":  "深圳信息职业技术大学",
-    "generated":  "2026-09-16 08:50:29",
+    "generated":  "2026-09-16 09:18:56",
     "count":  28,
     "total":  30,
     "items":  [
@@ -545,61 +545,5 @@
                       "src":  "assets/img/64e24b849fec.jpg",
                       "thumb":  "assets/thumb/64e24b849fec.jpg"
                   }
-              ],
-    "pdfs":  [
-                 {
-                     "event":  "AIGC 创新赛 华南赛区二等奖",
-                     "award":  "二等奖",
-                     "note":  "与「中国高校计算机大赛 AIGC 创新赛」卡片为同一份证书",
-                     "src":  "assets/pdf/d544667bf253.pdf",
-                     "original":  "CPT260509-6853_罗镓裕_华南赛区二等奖.pdf",
-                     "excluded":  false,
-                     "reason":  ""
-                 },
-                 {
-                     "event":  "大学英语四级成绩报告单",
-                     "award":  "总分 475",
-                     "note":  "与「大学英语四级（CET4）」卡片为同一份证书",
-                     "src":  "assets/pdf/92fe3efd5d3c.pdf",
-                     "original":  "CET4_202606_440900261101613.pdf",
-                     "excluded":  false,
-                     "reason":  ""
-                 },
-                 {
-                     "event":  "服务外包大赛 中部区域赛二等奖",
-                     "award":  "二等奖",
-                     "note":  "与「服务外包创新创业大赛（中部区域赛）」卡片为同一份证书",
-                     "src":  "assets/pdf/2c8fcbdac9f9.pdf",
-                     "original":  "奖项证书(省二).pdf",
-                     "excluded":  false,
-                     "reason":  ""
-                 },
-                 {
-                     "event":  "服务外包大赛 全国赛三等奖",
-                     "award":  "三等奖",
-                     "note":  "与「服务外包创新创业大赛（全国赛）」卡片为同一份证书",
-                     "src":  "assets/pdf/14090589d586.pdf",
-                     "original":  "获奖证书（国三）.pdf",
-                     "excluded":  false,
-                     "reason":  ""
-                 },
-                 {
-                     "event":  "“中国软件杯”大学生软件设计大赛",
-                     "award":  "三等奖",
-                     "note":  "与「“中国软件杯”大学生软件设计大赛」卡片为同一份证书",
-                     "src":  "assets/pdf/b9f26cb4ae89.pdf",
-                     "original":  "罗镓裕证书.pdf",
-                     "excluded":  false,
-                     "reason":  ""
-                 },
-                 {
-                     "event":  "（不展示）教师证书",
-                     "award":  "—",
-                     "note":  "属于指导教师，不是本人证书",
-                     "src":  "assets/pdf/4bacca060d98.pdf",
-                     "original":  "老师的证书.pdf",
-                     "excluded":  true,
-                     "reason":  "认定为他人证书"
-                 }
-             ]
+              ]
 }

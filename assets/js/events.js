@@ -196,6 +196,8 @@
   function openViewer(item) {
     var dlg = $('#viewer');
     var img = $('#viewer-img');
+    if (!dlg || !img) return;
+
     img.src = item.src;
     img.alt = item.event + ' — ' + item.award;
     $('#viewer-event').textContent = item.event;
@@ -204,16 +206,39 @@
       .filter(Boolean).join(' · ');
     viewer.target = item;
     resetViewer();
-    if (typeof dlg.showModal === 'function') dlg.showModal();
-    else dlg.setAttribute('open', '');
+
+    // showModal 已打开时再调用会抛 InvalidStateError，所以先判断
+    if (typeof dlg.showModal === 'function') {
+      if (!dlg.open) dlg.showModal();
+    } else {
+      dlg.setAttribute('open', '');
+    }
   }
 
+  // 关闭查看器。
+  //
+  // 三点注意：
+  //   1) 原生 close() 只能对处于打开状态的 dialog 调用，否则会抛
+  //      InvalidStateError 并中断后面的清理逻辑，所以先判断 open。
+  //   2) 加个兜底：万一 close() 之后 open 属性还在（例如浏览器实现差异），
+  //      直接手动移除，确保不会出现"关不掉"的情况。
+  //   3) 清掉 src 释放内存，手机上这一步很关键。
   function closeViewer() {
     var dlg = $('#viewer');
     var img = $('#viewer-img');
-    if (typeof dlg.close === 'function') dlg.close();
-    else dlg.removeAttribute('open');
-    img.removeAttribute('src'); // 释放内存，手机上很关键
+    if (!dlg) return;
+
+    if (dlg.open) {
+      if (typeof dlg.close === 'function') {
+        try { dlg.close(); } catch (e) { /* 忽略：下面还有兜底 */ }
+      }
+      if (dlg.open) dlg.removeAttribute('open');
+    } else {
+      dlg.removeAttribute('open');
+    }
+
+    if (img) img.removeAttribute('src');
+    viewer.target = null;   // 防止方向键在关闭后还能操作
     resetViewer();
   }
 
@@ -277,6 +302,16 @@
     dlg.addEventListener('cancel', function (e) {
       e.preventDefault();
       closeViewer();
+    });
+
+    // 兜底：无论以哪种方式关闭（按钮、点遮罩、Esc、代码调用），
+    // 都在 close 事件里统一释放大图并复位状态，避免残留占内存、
+    // 以及关闭后方向键还能继续切换。
+    dlg.addEventListener('close', function () {
+      var img = $('#viewer-img');
+      if (img) img.removeAttribute('src');
+      viewer.target = null;
+      resetViewer();
     });
   }
 

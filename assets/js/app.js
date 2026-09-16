@@ -9,7 +9,6 @@
 
   var state = {
     all: [],
-    pdfs: [],
     owner: '',
     school: '',
     category: 'all',
@@ -41,10 +40,8 @@
         state.school = data.school || '';
         // 归属待确认或明确不属于本人的证书不展示
         state.all = (data.items || []).filter(function (item) { return !item.excluded; });
-        state.pdfs = (data.pdfs || []).filter(function (item) { return !item.excluded; });
         renderHeader();
         renderStats();
-        renderPdfs();
         return data;
       });
   }
@@ -137,30 +134,6 @@
       '</article>';
   }
 
-  function renderPdfs() {
-    var section = $('#pdf-section');
-    var host = $('#pdf-list');
-    if (!section || !host) return;
-
-    if (!state.pdfs.length) {
-      section.hidden = true;
-      return;
-    }
-    host.innerHTML = state.pdfs.map(function (pdf) {
-      return '' +
-        '<li>' +
-          '<span class="pdf-icon" aria-hidden="true">PDF</span>' +
-          '<div class="pdf-info">' +
-            '<strong>' + esc(pdf.event) + '</strong>' +
-            (pdf.award ? '<span class="badge badge-award">' + esc(pdf.award) + '</span>' : '') +
-            '<p class="muted">' + esc(pdf.note || '') + '</p>' +
-          '</div>' +
-          '<a class="btn btn-primary" href="' + esc(pdf.src) + '" target="_blank" rel="noopener">打开查看</a>' +
-        '</li>';
-    }).join('');
-    section.hidden = false;
-  }
-
   function render() {
     var host = $('#grid');
     var empty = $('#empty');
@@ -196,7 +169,6 @@
     esc: esc,
     load: load,
     render: render,
-    renderPdfs: renderPdfs,
     visibleItems: visibleItems,
     byId: byId
   };
