@@ -1,10 +1,28 @@
 {
     "owner":  "罗镓裕",
     "school":  "深圳信息职业技术大学",
-    "generated":  "2026-09-16 09:18:56",
-    "count":  28,
-    "total":  30,
+    "generated":  "2026-10-23",
+    "count":  29,
+    "total":  31,
     "items":  [
+                  {
+                      "id":  31,
+                      "event":  "2026年广东省大学生计算机设计大赛（人工智能应用组·人工智能实践赛）",
+                      "eventShort":  "广东省大学生计算机设计大赛",
+                      "award":  "二等奖",
+                      "level":  "省级",
+                      "category":  "competition",
+                      "team":  "罗镓裕、张芷怡、卢姵仪、李明珠、廖俊健、刘桦炀、林永康、柯斯丹、刘志锋",
+                      "org":  "广东省教育厅",
+                      "certNo":  "2609013066",
+                      "teacher":  "江凯、苗霄宇",
+                      "date":  "2026年9月",
+                      "work":  "智联必达——基于多目标强化学习的跨境多式联运智能决策系统",
+                      "excluded":  false,
+                      "reason":  "",
+                      "src":  "assets/img/gd-computer-design-2026-2609013066.jpg",
+                      "thumb":  "assets/thumb/gd-computer-design-2026-2609013066.jpg"
+                  },
                   {
                       "id":  1,
                       "event":  "全国大学英语四级考试（CET4）成绩报告单",
