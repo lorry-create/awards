@@ -119,6 +119,12 @@ code {
 }
 
 .brand { display: flex; align-items: center; gap: .8rem; min-width: 0; }
+.header-actions { display: flex; align-items: center; gap: .6rem; flex-shrink: 0; }
+@media (max-width: 540px) {
+  .header-inner { flex-wrap: wrap; }
+  .header-actions { margin-left: auto; }
+  .header-actions .btn { font-size: .8rem; padding: .4rem .65rem; }
+}
 .brand-mark { font-size: 1.7rem; line-height: 1; }
 .brand h1 { font-size: 1.22rem; }
 .subtitle { margin: 0; color: var(--text-soft); font-size: .85rem; }

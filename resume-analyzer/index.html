@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="免费的浏览器本地简历分析工具：检查内容完整度、成果量化、表达清晰度和目标岗位关键词，支持 PDF、DOCX 和文本。">
+  <meta name="theme-color" content="#8b1f2f">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; connect-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>简历研判 · Resume Lab</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="vendor/jszip/jszip.min.js" defer></script>
+  <script src="app.mjs" type="module"></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">跳到分析工作台</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="./" aria-label="简历研判首页"><span class="brand-icon" aria-hidden="true">R<span>／</span></span><span><strong>简历研判</strong><small>RESUME LAB</small></span></a>
+      <nav aria-label="网站导航"><a href="../">获奖证书 <span aria-hidden="true">↗</span></a><button id="theme" class="icon-btn" type="button" aria-label="切换到深色模式">深色模式</button></nav>
+    </div>
+  </header>
+  <main class="shell">
+    <section class="intro" aria-labelledby="intro-title">
+      <div class="intro-copy"><p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> 免费开放 · 无需注册</p><h1 id="intro-title">让经历被看见，<br>让简历更有说服力<span>。</span></h1><p class="intro-note">从内容完整度到岗位关键词，找到值得修改的地方。<br class="desktop-break">上传一份简历，开始一次有依据的自查。</p></div>
+      <div class="intro-aside"><span class="aside-index">YOUR NEXT CHAPTER</span><p>好简历的起点，<br>是说清楚你做成了什么。</p><div class="local-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6Z"/><path d="m8 12 3 3 5-6"/></svg><span>文件在浏览器内处理<br><small>无需上传简历 · 无云端存储</small></span></div></div>
+    </section>
+
+    <div class="workspace" id="workspace">
+      <section class="input-column" aria-labelledby="input-title">
+        <div class="panel input-panel">
+          <div class="panel-heading"><div><span class="step">01</span><h2 id="input-title">放入你的简历</h2></div><div class="inline-actions"><button id="sample" type="button" class="text-btn">试用示例</button><button id="clear" type="button" class="text-btn muted-btn">清空</button></div></div>
+          <label id="dropzone" class="dropzone" for="resume-file"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M18 4H8v24h17V11Z"/><path d="M18 4v8h7M16 24V15m-4 4 4-4 4 4"/></svg><strong id="upload-title">点击选择，或将文件拖到这里</strong><span>PDF / DOCX / TXT / MD · 最大 10 MB</span><input id="resume-file" type="file" accept=".pdf,.docx,.txt,.md" aria-label="选择简历文件"></label>
+          <p id="file-status" class="field-note" role="status">支持文字版 PDF；扫描件请先转为可复制文字。旧版 DOC 请另存为 DOCX。</p>
+          <div class="text-label"><label for="resume-text">或直接粘贴简历内容</label><span id="char-count">0 字符</span></div>
+          <textarea id="resume-text" rows="13" maxlength="50000" placeholder="教育背景、项目经历、实习经历、专业技能……&#10;&#10;导入文件后，文字也会显示在这里，可以检查顺序并直接修改。" spellcheck="false"></textarea>
+          <p class="field-note">文件解析可能打乱多栏排版，请检查文字顺序。最多分析 50,000 字符、25 页 PDF。</p>
+        </div>
+        <div class="panel target-panel">
+          <div class="panel-heading"><div><span class="step">02</span><h2>设定目标岗位</h2><span class="optional">选填</span></div></div>
+          <label class="field-label" for="role">选择岗位方向</label><select id="role"><option value="general">先检查简历内容，不指定岗位</option><option value="frontend">前端开发</option><option value="backend">后端开发</option><option value="ai">AI 应用开发</option><option value="data">数据分析</option><option value="product">产品经理 / 产品助理</option><option value="operations">运营 / 新媒体</option></select>
+          <label class="field-label spaced" for="job-description">职位描述（JD）</label><textarea id="job-description" rows="4" maxlength="12000" placeholder="粘贴招聘要求，分析会优先使用其中识别到的技能词。" spellcheck="false"></textarea>
+          <label class="field-label spaced" for="custom-keywords">补充岗位关键词</label><input id="custom-keywords" type="text" maxlength="1000" placeholder="例如：Vue、跨境物流、强化学习（用逗号分隔）">
+          <p class="field-note">有 JD 时，使用从 JD 识别的词；否则使用岗位预设词。补充词会一并检查。</p>
+          <div id="keyword-preview" class="keyword-preview" aria-live="polite">暂不进行岗位匹配，仅检查简历内容。</div>
+        </div>
+        <div class="analyze-bar"><button id="analyze" class="primary-btn" type="button"><span>开始分析</span><span aria-hidden="true">↗</span></button><p>基于公开规则的文本自查，无需 API 密钥。</p></div>
+        <p id="error" class="error" role="alert" hidden></p>
+      </section>
+
+      <section class="report-column" aria-labelledby="report-title">
+        <div class="report-top"><div><span class="eyebrow">DIAGNOSIS REPORT</span><h2 id="report-title">简历分析报告</h2></div><span id="report-state" class="state-label">等待分析</span></div>
+        <div id="empty-report" class="empty-report panel"><div class="paper-illustration" aria-hidden="true"><span class="paper-fold"></span><span class="paper-avatar">R</span><span class="paper-line long"></span><span class="paper-line medium"></span><span class="paper-divider"></span><span class="paper-line long"></span><span class="paper-line short"></span><span class="paper-line long"></span><span class="paper-line medium"></span><span class="paper-check">✓</span></div><h3>下一份更好的简历，从这里开始</h3><p id="empty-note">放入简历后，点击「开始分析」。<br>你会得到具体问题、原文依据与修改方向。</p><ol class="report-outline"><li><span>01</span> 内容与结构检查</li><li><span>02</span> 经历与成果表达</li><li><span>03</span> 岗位关键词对照</li></ol><button id="sample-empty" class="outline-btn" type="button">先看一份示例报告 <span aria-hidden="true">→</span></button></div>
+        <div id="report" hidden>
+          <div class="panel score-panel"><div class="score-top"><div class="score-ring"><svg viewBox="0 0 120 120" role="img" aria-labelledby="score-ring-title"><title id="score-ring-title">文本诊断分</title><circle class="ring-track" cx="60" cy="60" r="51"/><circle id="score-arc" class="ring-value" cx="60" cy="60" r="51" pathLength="100" stroke-dasharray="0 100"/></svg><div><strong id="total-score">—</strong><span>/ 100</span></div></div><div class="score-summary"><p class="eyebrow">文本诊断分</p><h3 id="score-title"></h3><p id="score-note"></p></div></div><div class="report-meta" id="report-meta"></div><p class="score-boundary">分数反映文本规则的覆盖情况；不代表录用概率，也不判断经历真实性。</p><div id="dimensions" class="dimensions"></div></div>
+          <div class="report-actions"><button id="download" type="button" class="outline-btn">下载文字报告 <span aria-hidden="true">↓</span></button><button id="print" type="button" class="outline-btn">打印 / 保存 PDF <span aria-hidden="true">↗</span></button></div>
+          <section class="panel report-section"><div class="section-heading"><h3>优先修改这些地方</h3><span id="issue-count" class="section-count"></span></div><div id="recommendations" class="recommendations"></div></section>
+          <section class="panel report-section"><div class="section-heading"><h3>内容完整度</h3><span class="section-caption">按检测规则逐项检查</span></div><div id="structure" class="structure"></div></section>
+          <section class="panel report-section"><div class="section-heading"><h3>岗位关键词对照</h3><span id="match-count" class="section-count"></span></div><p id="keyword-source" class="section-note"></p><div id="keyword-results"></div><p class="field-note">只在确实具备相关能力时补充关键词。词语出现不等于能力达标，未检出也不等于没有能力。</p></section>
+          <section class="panel report-section"><div class="section-heading"><h3>让经历更具体</h3><span class="section-caption">依据原文给出填空模板</span></div><div id="evidence"></div><div id="rewrite-examples"></div></section>
+          <details class="panel methodology"><summary>评分依据与使用边界 <span aria-hidden="true">＋</span></summary><div><p>本工具使用固定的文本规则，不调用大模型，也不读取照片、性别、年龄或民族。它不能识别全部行业术语，不能核验事实，不能检查原文件的视觉排版。</p><ul><li>内容完整度 30 分：联系方式 6、教育背景 6、项目或工作经历 8、技能 6、经历时间 4。</li><li>成果表达 25 分：最多 4 条带行动与量化结果的表述，共 16 分；最多 3 条具体行动表述，共 9 分。日期、电话号码不作为量化成果。</li><li>表达清晰度 20 分：正文长度、分段、长句情况与泛化自评，各占 5 分。</li><li>岗位匹配 25 分：命中关键词数 ÷ 目标关键词总数 × 25，所有关键词权重相同。</li><li>未指定有效关键词时，岗位匹配不计分，其余 75 分按比例换算为 100 分。规则版本 1.0。</li></ul><p>分析只在当前页面内存中保留。关闭或刷新页面后清除；主题偏好可保存在本机。下载或打印的报告由你自行保管。</p><p>文件解析使用 <a href="https://github.com/mozilla/pdf.js" target="_blank" rel="noopener noreferrer">PDF.js</a> 与 <a href="https://github.com/Stuk/jszip" target="_blank" rel="noopener noreferrer">JSZip</a>，所有依赖由本站提供。</p></div></details>
+        </div>
+      </section>
+    </div>
+    <footer><span>简历研判 <span class="footer-slash">／</span> 把经历写清楚，把选择留给你。</span><a href="../">返回获奖证书 <span aria-hidden="true">↗</span></a></footer>
+  </main>
+  <noscript><p class="noscript">请启用 JavaScript 后使用本地分析功能。</p></noscript>
+</body>
+</html>
