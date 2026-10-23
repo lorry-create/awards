@@ -24,9 +24,11 @@ function initializeTheme(){
   $('theme').addEventListener('click',()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';apply(next);try{localStorage.setItem('awards-theme',next);}catch{}});
 }
 
-async function pdfText(buffer){
-  const pdfjs=await import('./vendor/pdfjs/pdf.mjs');
-  pdfjs.GlobalWorkerOptions.workerSrc=new URL('./vendor/pdfjs/pdf.worker.mjs',import.meta.url).href;
+async function pdfText(buffer,onProgress){
+  onProgress('正在加载 PDF 解析组件，首次使用可能稍慢；也可直接粘贴文字。');
+  const pdfjs=await import('./vendor/pdfjs/pdf.mjs?v=5.6.205-min');
+  pdfjs.GlobalWorkerOptions.workerSrc=new URL('./vendor/pdfjs/pdf.worker.mjs?v=5.6.205-min',import.meta.url).href;
+  onProgress('正在浏览器内解析 PDF…');
   const task=pdfjs.getDocument({data:new Uint8Array(buffer),cMapUrl:new URL('./vendor/pdfjs/cmaps/',import.meta.url).href,cMapPacked:true,standardFontDataUrl:new URL('./vendor/pdfjs/standard_fonts/',import.meta.url).href,isEvalSupported:false,useWasm:false,disableFontFace:true,useSystemFonts:true});
   let pdf;
   try{
@@ -34,6 +36,7 @@ async function pdfText(buffer){
     if(pdf.numPages>25)throw new Error('这份 PDF 超过 25 页，请先提取简历正文后再导入。');
     const pages=[];let total=0;
     for(let p=1;p<=pdf.numPages;p++){
+      onProgress(`正在浏览器内解析 PDF · ${p} / ${pdf.numPages} 页…`);
       const page=await pdf.getPage(p);const content=await page.getTextContent();let text='',y=null;
       for(const item of content.items){
         if(!('str' in item))continue;
@@ -98,7 +101,7 @@ async function importFile(file){
   state.importing=true;$('analyze').disabled=true;resetReport('文件正在本地解析，完成后可检查文字并分析。');$('file-status').textContent='正在本地读取 '+file.name+'…';showError();
   try{
     const buffer=await file.arrayBuffer();let result;
-    if(/\.pdf$/i.test(file.name))result=await pdfText(buffer);
+    if(/\.pdf$/i.test(file.name))result=await pdfText(buffer,message=>{if(sequence===state.sequence)$('file-status').textContent=message;});
     else if(/\.docx$/i.test(file.name))result=await docxText(buffer);
     else {let text;try{text=new TextDecoder('utf-8',{fatal:true}).decode(buffer);}catch{text=new TextDecoder('gb18030').decode(buffer);}result={text,pages:null};}
     if(sequence!==state.sequence)return;

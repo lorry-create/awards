@@ -23,7 +23,7 @@
 
 ## 第三方组件
 
-- [PDF.js / pdfjs-dist](https://github.com/mozilla/pdf.js) 5.6.205，Apache-2.0；许可证保留在 `vendor/pdfjs/LICENSE`。包含核心模块、worker、CMaps 和标准字体。
+- [PDF.js / pdfjs-dist](https://github.com/mozilla/pdf.js) 5.6.205，Apache-2.0；许可证保留在 `vendor/pdfjs/LICENSE`。核心模块与 worker 使用官方 min 版本（保留稳定文件名），并包含 CMaps 和标准字体。
 - [JSZip](https://github.com/Stuk/jszip) 3.10.1，MIT / GPLv3 双许可证；本项目采用 MIT，许可证保留在 `vendor/jszip/LICENSE.markdown`。
 
 依赖从本机随工作区提供的运行时复制，并随网站部署，不依赖第三方 CDN。更新时一起更新版本、worker、资源和许可证。
